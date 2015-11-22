@@ -22,9 +22,9 @@ var Dashboard = Widget.extend({
 
     init: function(parent, data){
         this.all_dashboards = ['apps', 'invitations', 'planner', 'share'];
-        if (odoo.version == 'community') {
-            this.all_dashboards = this.all_dashboards.concat('enterprise');
-        }
+        //if (odoo.version == 'community') {
+        //    this.all_dashboards = this.all_dashboards.concat('enterprise');
+        //}
         return this._super.apply(this, arguments);
     },
 
