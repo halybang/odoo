@@ -81,10 +81,10 @@ var SystrayMenu = Widget.extend({
                     state: JSON.stringify(state),
                     scope: 'userinfo',
                 };
-                framework.redirect('https://accounts.odoo.com/oauth2/auth?'+$.param(params));
+                framework.redirect('https://accounts.erphanoi.com/oauth2/auth?'+$.param(params));
             }).fail(function(result, ev){
                 ev.preventDefault();
-                framework.redirect('https://accounts.odoo.com/account');
+                framework.redirect('https://accounts.erphanoi.com/account');
             });
         });
     },
