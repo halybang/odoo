@@ -1456,7 +1456,7 @@
     </t>
 </t>
 
-<t t-name="EnterpriseUpgrade">
+<!--t t-name="EnterpriseUpgrade">
     <div class="row">
         <div class="col-xs-6">
             Get this feature and much more with Odoo Enterprise!
@@ -1473,6 +1473,6 @@
             <img class="img-responsive" t-att-src='_s + "/web/static/src/img/enterprise_upgrade.jpg"' draggable="false"/>
         </div>
     </div>
-</t>
+</t-->
 
 </templates>

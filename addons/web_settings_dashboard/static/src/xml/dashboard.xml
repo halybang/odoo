@@ -136,7 +136,7 @@
         </div>
     </t>
 
-    <t t-name="DashboardEnterprise">
+    <!--t t-name="DashboardEnterprise">
         <div class="col-md-3 col-sm-6 col-xs-12 o_web_settings_dashboard_col">
             <div class="text-center o_web_settings_dashboard_enterprise">
                 <div class="text-center o_web_settings_dashboard_enterprise">
@@ -161,6 +161,6 @@
                 </div>
             </div>
         </div>
-    </t>
+    </t-->
 
 </templates>
