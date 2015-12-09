@@ -17858,7 +17858,7 @@ msgstr "Hạng mục quy trình"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_payment_sips
-msgid "Worldline SIPS Payment Acquiring  for online payments"
+msgid "Worldline SIPS"
 msgstr "Worldline SIPS Payment Acquiring  for online payments"
 
 #. module: base
