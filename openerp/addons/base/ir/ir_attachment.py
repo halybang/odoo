@@ -19,6 +19,7 @@ from openerp.tools.misc import ustr
 
 _logger = logging.getLogger(__name__)
 
+
 try:
     import magic
 except ImportError:
@@ -97,10 +98,13 @@ class ir_attachment(osv.osv):
         return data
 
     def _storage(self, cr, uid, context=None):
-        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'file')
+        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'db')
 
     def _filestore(self, cr, uid, context=None):
         return tools.config.filestore(cr.dbname)
+
+    def lobject(self, cr, *args):
+        return cr._cnx.lobject(*args)
 
     def force_storage(self, cr, uid, context=None):
         """Force all attachments to be stored in the currently configured storage"""
@@ -109,8 +113,9 @@ class ir_attachment(osv.osv):
 
         location = self._storage(cr, uid, context)
         domain = {
-            'db': [('store_fname', '!=', False)],
-            'file': [('db_datas', '!=', False)],
+            'db': ['|',('store_fname', '!=', False),('lobj_id', '!=', False)],
+            'file': ['|',('db_datas', '!=', False),('lobj_id', '!=', False)],
+            'lobject': ['|',('store_fname', '!=', False),('db_datas', '!=', False)],            
         }[location]
 
         ids = self.search(cr, uid, domain, context=context)
@@ -186,8 +191,13 @@ class ir_attachment(osv.osv):
         for attach in self.browse(cr, uid, ids, context=context):
             if attach.store_fname:
                 result[attach.id] = self._file_read(cr, uid, attach.store_fname, bin_size)
+            elif attach.db_datas:
+                result[attach.id] = attach.db_datas                    
             else:
-                result[attach.id] = attach.db_datas
+                lobj = self.lobject(cr, long(attach.lobj_id), 'rb')
+                if bin_size:
+                    return lobj.seek(0, 2)
+                result = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
         return result
 
     def _data_set(self, cr, uid, id, name, value, arg, context=None):
@@ -212,16 +222,28 @@ class ir_attachment(osv.osv):
         location = self._storage(cr, uid, context)
         # compute the index_content field
         vals['index_content'] = self._index(cr, SUPERUSER_ID, bin_data, attach.datas_fname, attach.mimetype),
-        if location != 'db':
+        if location == 'file':
             # create the file
             fname = self._file_write(cr, uid, value, checksum)
             vals.update({
                 'store_fname': fname,
+                'lobj_id': False,
+                'db_datas': False
+            })
+        elif  location == 'lobject':
+            # create the large object
+            lobjw = self.lobject(cr, 0, 'wb')  # oid=0 means creation
+            lobjw.write(value.encode('base64'))
+            fname = str(lobjw.oid)                        
+            vals.update({
+                'lobj_id': fname,
+                'store_fname': False,
                 'db_datas': False
             })
         else:
             vals.update({
                 'store_fname': False,
+                'lobj_id': False,
                 'db_datas': value
             })
         # SUPERUSER_ID as probably don't have write access, trigger during create
@@ -285,6 +307,7 @@ class ir_attachment(osv.osv):
         # al: We keep shitty field names for backward compatibility with document
         'datas': fields.function(_data_get, fnct_inv=_data_set, string='File Content', type="binary", nodrop=True),
         'store_fname': fields.char('Stored Filename'),
+        'lobj_id': fields.char('Large Object ID'),
         'db_datas': fields.binary('Database Data'),
         # computed fields depending on datas
         'file_size': fields.integer('File Size', readonly=True),
@@ -444,10 +467,14 @@ class ir_attachment(osv.osv):
         to_delete = [a.store_fname
                         for a in self.browse(cr, uid, ids, context=context)
                             if a.store_fname]
+        to_clean = [b.lobj_id
+                        for b in self.browse(cr, uid, ids, context=context)
+                            if b.lobj_id]        
         res = super(ir_attachment, self).unlink(cr, uid, ids, context)
         for file_path in to_delete:
             self._file_delete(cr, uid, file_path)
-
+        for lobj in to_clean:    
+            self.lobject(cr, long(lobj), 'rb').unlink()
         return res
 
     def create(self, cr, uid, values, context=None):
