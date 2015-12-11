@@ -98,7 +98,7 @@ class ir_attachment(osv.osv):
         return data
 
     def _storage(self, cr, uid, context=None):
-        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'db')
+        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'lobject')
 
     def _filestore(self, cr, uid, context=None):
         return tools.config.filestore(cr.dbname)
@@ -197,7 +197,7 @@ class ir_attachment(osv.osv):
                 lobj = self.lobject(cr, long(attach.lobj_id), 'rb')
                 if bin_size:
                     return lobj.seek(0, 2)
-                result = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
+                result[attach.id] = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
         return result
 
     def _data_set(self, cr, uid, id, name, value, arg, context=None):
