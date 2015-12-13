@@ -98,7 +98,7 @@ class ir_attachment(osv.osv):
         return data
 
     def _storage(self, cr, uid, context=None):
-        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'lobject')
+        return self.pool['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'ir_attachment.location', 'lo')
 
     def _filestore(self, cr, uid, context=None):
         return tools.config.filestore(cr.dbname)
@@ -115,7 +115,7 @@ class ir_attachment(osv.osv):
         domain = {
             'db': ['|',('store_fname', '!=', False),('lobj_id', '!=', False)],
             'file': ['|',('db_datas', '!=', False),('lobj_id', '!=', False)],
-            'lobject': ['|',('store_fname', '!=', False),('db_datas', '!=', False)],            
+            'lo': ['|',('store_fname', '!=', False),('db_datas', '!=', False)],            
         }[location]
 
         ids = self.search(cr, uid, domain, context=context)
@@ -230,7 +230,7 @@ class ir_attachment(osv.osv):
                 'lobj_id': False,
                 'db_datas': False
             })
-        elif  location == 'lobject':
+        elif  location == 'lo':
             # create the large object
             lobjw = self.lobject(cr, 0, 'wb')  # oid=0 means creation
             lobjw.write(value.encode('base64'))
