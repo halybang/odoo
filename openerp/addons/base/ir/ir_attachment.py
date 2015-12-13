@@ -196,8 +196,9 @@ class ir_attachment(osv.osv):
             else:
                 lobj = self.lobject(cr, long(attach.lobj_id), 'rb')
                 if bin_size:
-                    return lobj.seek(0, 2)
-                result[attach.id] = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
+                    result[attach.id] =  lobj.seek(0, 2)
+                else:
+                    result[attach.id] = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
         return result
 
     def _data_set(self, cr, uid, id, name, value, arg, context=None):
