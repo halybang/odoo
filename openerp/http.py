@@ -1608,7 +1608,13 @@ def db_filter(dbs, httprequest=None):
     h = httprequest.environ.get('HTTP_HOST', '').split(':')[0]
     d, _, r = h.partition('.')
     if (d == "www" or d == "accounts") and r:
-        d = r.partition('.')[0]		
+        d = r.partition('.')[0]
+    if openerp.tools.config.misc.has_key("dbmaps"):
+        for k, v in openerp.tools.config.misc["dbmaps"].items():
+            if k == h and v in dbs:                
+                dbs =  [ openerp.tools.config.misc["dbmaps"][k] ]
+                return dbs
+            
     if openerp.tools.config['proxy_mode'] and 'HTTP_X_FORWARDED_HOST' in httprequest.environ and 'HTTP_X_CUSTOM_REFERRER' in httprequest.environ:
         d = httprequest.environ.get('HTTP_X_CUSTOM_REFERRER', '')
     r = openerp.tools.config['dbfilter'].replace('%h', h).replace('%d', d)

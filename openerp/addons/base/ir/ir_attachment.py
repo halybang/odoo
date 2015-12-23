@@ -198,7 +198,7 @@ class ir_attachment(osv.osv):
                 if bin_size:
                     result[attach.id] =  lobj.seek(0, 2)
                 else:
-                    result[attach.id] = lobj.read().decode('base64') # GR TODO it must be possible to read-encode in chunks                 
+                    result[attach.id] = lobj.read() # GR TODO it must be possible to read-encode in chunks                 
         return result
 
     def _data_set(self, cr, uid, id, name, value, arg, context=None):
@@ -234,7 +234,7 @@ class ir_attachment(osv.osv):
         elif  location == 'lo':
             # create the large object
             lobjw = self.lobject(cr, 0, 'wb')  # oid=0 means creation
-            lobjw.write(value.encode('base64'))
+            lobjw.write(value)
             fname = str(lobjw.oid)                        
             vals.update({
                 'lobj_id': fname,
