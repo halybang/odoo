@@ -3,17 +3,18 @@
 # * website
 # 
 # Translators:
-# Bogdan, 2015
+# Bohdan Lisnenko, 2015-2016
+# Bohdan Lisnenko, 2016
 # Taras Kovaliuk <tratatuta123@gmail.com>, 2015
 # Zoriana Zaiats, 2015
-# ТАрас <tratatuta@i.ua>, 2015
+# ТАрас <tratatuta@i.ua>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-09 09:18+0000\n"
-"PO-Revision-Date: 2015-12-02 16:52+0000\n"
-"Last-Translator: Taras Kovaliuk <tratatuta123@gmail.com>\n"
+"PO-Revision-Date: 2016-04-23 09:31+0000\n"
+"Last-Translator: Bohdan Lisnenko\n"
 "Language-Team: Ukrainian (http://www.transifex.com/odoo/odoo-9/language/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -43,7 +44,7 @@ msgstr ""
 #: code:addons/website/static/src/xml/website.gallery.xml:97
 #, python-format
 msgid "&times;"
-msgstr "&разів;"
+msgstr "&times;"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.show_website_info
@@ -590,7 +591,7 @@ msgid ""
 "                                Below your main banner or call-to-action, it's a good practice to put\n"
 "                                social proofs about your products or services; customer quotes, videos,\n"
 "                                photos of your products in actions, twitter quotes, etc."
-msgstr "<strong>Показати </strong><br/>\nПід Вашим головним банером чи \"закликом до дії\", варто встановити\nсоціальні рекомендації Ваших продуктів чи послуг; відгуки клієнтів, відео, \nфото продуктів в дії, твіти і т.д."
+msgstr "<strong>Показати </strong><br/>\nПід Вашим головним банером чи \"закликом до дії\", варто встановити\nсоціальні рекомендації Ваших товарів чи послуг; відгуки клієнтів, відео, \nфото продуктів в дії, твіти і т.д."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
@@ -1134,7 +1135,7 @@ msgstr "Чорний"
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
 msgid "Boost your online sales with sleek product pages."
-msgstr "Збільшуйте свої онлайн-продажі, зробивши сторінки продуктів вишуканішими."
+msgstr "Збільшуйте свої онлайн-продажі, зробивши сторінки товарів вишуканішими."
 
 #. module: website
 #. openerp-web
@@ -1162,7 +1163,7 @@ msgstr "Бізнесмен"
 #: model:ir.model.fields,field_description:website.field_website_cdn_url
 #: model:ir.model.fields,field_description:website.field_website_config_settings_cdn_url
 msgid "CDN Base URL"
-msgstr ""
+msgstr "CDN Base URL"
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_cdn_filters
@@ -1320,7 +1321,7 @@ msgstr "Companies"
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_company_id
 msgid "Company"
-msgstr "Company"
+msgstr "Компанія"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.layout_footer_copyright
@@ -1345,7 +1346,7 @@ msgstr "Стиснути даний HTML для покращення резул�
 #. module: website
 #: model:ir.ui.menu,name:website.menu_website_global_configuration
 msgid "Configuration"
-msgstr "Configuration"
+msgstr "Налаштування"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.view_website_config_settings
@@ -1490,7 +1491,7 @@ msgstr "Створення головного меню сайту - важлив
 #. module: website
 #: model:ir.ui.view,arch_db:website.user_navbar
 msgid "Customize <span class=\"caret\"/>"
-msgstr "Налаштувння <span class=\"caret\"/>"
+msgstr "Налаштування <span class=\"caret\"/>"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.user_navbar
@@ -1574,7 +1575,7 @@ msgstr "Відкривайте нові магазини просто через
 #: code:addons/website/static/src/xml/website.seo.xml:65
 #, python-format
 msgid "Description"
-msgstr "Description"
+msgstr "Опис"
 
 #. module: website
 #. openerp-web
@@ -1651,7 +1652,7 @@ msgstr "Не вагайтесь"
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
 msgid "Download the technical documentation of a product"
-msgstr "Завантажити технічну документацію до продукту"
+msgstr "Завантажити технічну документацію по товару"
 
 #. module: website
 #. openerp-web
@@ -1800,7 +1801,7 @@ msgstr "Експерт"
 msgid ""
 "Explain the benefits you offer. Don't write about products or\n"
 "            services here, write about solutions."
-msgstr "Ваші переваги. Не пишіть про продукти чи послуги, пишіть про вирішення проблем."
+msgstr "Ваші переваги. Не пишіть про товари чи послуги, пишіть про вирішення проблем."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
@@ -2060,7 +2061,7 @@ msgstr "Розвивати"
 #. module: website
 #: model:ir.ui.view,arch_db:website.user_navbar
 msgid "HELP &amp; TUTORIALS"
-msgstr "ДОПОМОГА &amp; ІНСТРУКТАЖ"
+msgstr "ДОПОМОГА ТА ІНСТРУКТАЖ"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.user_navbar
@@ -2160,7 +2161,7 @@ msgstr "Якщо на вашому сайті багато сторінок, м�
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
 msgid "Images on landing and product pages,"
-msgstr "Зображення на цільових та сторінках продуктів, "
+msgstr "Зображення на цільових та сторінках товарів, "
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.snippet_options
@@ -2187,7 +2188,7 @@ msgid ""
 "                        fully open source. You can read more about the new name here.\n"
 "                        We have also prepared a short FAQ to explain all these changes\n"
 "                        to all of you. <br/>"
-msgstr ""
+msgstr "Якщо Ви все ж дещо спантеличені нашими \nвчорашніми оголошеннями,- ось невеликі \nпідсумки для Вас.<br/>\nМи вирішили змінити назву тому, що <b>\"OpenERP\"</b> \nбільше не відображало пропозицію компанії. Наші найновіші \nзастосунки, такі як Конструктор сайтів, PОS та \nЕлектронна комерція - виходять за рамки ERP.<br/>\nТа <u>не хвилюйтесь</u>, <b>Odoo</b> завжди буде \nзагальнодоступним. Більше про нову назву можна прочитати тут. \nМи також підготували FAQ, щоб пояснити Вам всі ці зміни. <br/>"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
@@ -2791,7 +2792,7 @@ msgstr "Наша команда"
 #. module: website
 #: model:ir.ui.view,arch_db:website.footer_default
 msgid "Our products &amp; Services"
-msgstr "Нпші товари &amp; послуги"
+msgstr "Наші товари та послуги"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.aboutus
@@ -2833,7 +2834,7 @@ msgstr "Заголовок сторінки"
 msgid ""
 "Panels are a great tool to compare offers or to emphasize on\n"
 "                key features. To compare products, use the inside columns."
-msgstr "Панелі - чудовий інструмент для порівняння замовлень \nчи підкреслення основних особливостей. Для порівняння продуктів, виберіть стовпці всередині."
+msgstr "Панелі - чудовий інструмент для порівняння замовлень \nчи підкреслення основних особливостей. Для порівняння товарів, виберіть стовпці всередині."
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_menu_parent_left
@@ -2853,7 +2854,7 @@ msgstr "Батьківська"
 #. module: website
 #: model:ir.model,name:website.model_res_partner
 msgid "Partner"
-msgstr "Partner"
+msgstr "Партнер"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.template_partner_post
@@ -2905,7 +2906,7 @@ msgstr "Зверніть увагу, для цього потрібен паке
 #: model:ir.ui.view,arch_db:website.s_faq
 #: model:ir.ui.view,arch_db:website.s_faq_collapse
 msgid "Point of Sale Questions <small>v7</small>"
-msgstr "Питання по POS <small>v7</small>"
+msgstr "Питання по касовому терміналу <small>v7</small>"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.layout_footer_copyright
@@ -2982,7 +2983,7 @@ msgstr "Забезпечте своїх відвідувачів та клієн
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_partner_id
 msgid "Public Partner"
-msgstr "Державний партнер"
+msgstr "Оприлюднений партнер"
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_user_id
@@ -3179,7 +3180,7 @@ msgstr "Виберіть та видаліть блоки, щоб прибрат
 #: code:addons/website/static/src/js/website.tour.banner.js:52
 #, python-format
 msgid "Select the parent container to get the global options of the banner."
-msgstr ""
+msgstr "Виберіть головне сховище, щоб отримати загальні властивості банера."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
@@ -3298,8 +3299,8 @@ msgstr "Спецефекти та анімація"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.view_website_config_settings
-msgid "Speed"
-msgstr "Швидкість"
+msgid "Optimization"
+msgstr "Оптимізація"
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.snippet_options
@@ -3320,7 +3321,7 @@ msgid ""
 "                                    how competitive the keywords are in AdWords, and how much it’ll cost to\n"
 "                                    advertise on each keyword. All of this information will  help you determine\n"
 "                                    which keywords you want to use in your first campaign."
-msgstr ""
+msgstr "Почніть з перегляду частоти використання пошукових фраз, \nпов'язаних з Вашою діяльністю, конкурентності цих ключових слів у \nAdWords та ціни рекламування за кожним з них. Вся ця інформація \nдопоможе визначити ключові слова для Вашої першої кампанії."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.s_image_text
@@ -3441,7 +3442,7 @@ msgid ""
 "The Point of Sale works perfectly on any kind of touch enabled\n"
 "                                device, whether it's multi-touch tablets like an iPad or\n"
 "                                keyboardless resistive touchscreen terminals."
-msgstr "POS відмінно працює на всіх сенсорних пристроях, \nбудь то мультисенсорний планшет, як iPad, \nчи резистивний сенсорний термінал."
+msgstr "Касовий термінал відмінно працює на всіх сенсорних пристроях, \nбудь то мультисенсорний планшет, як iPad, \nчи резистивний сенсорний термінал."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.s_faq
@@ -3449,7 +3450,7 @@ msgid ""
 "The Point of Sale works perfectly on any kind of touch enabled\n"
 "                device, whether it's multi-touch tablets like an iPad or\n"
 "                keyboardless resistive touchscreen terminals."
-msgstr "POS відмінно працює на всіх сенсорних пристроях, \nбудь то мультисенсорний планшет, як iPad, \nчи резистивний сенсорний термінал."
+msgstr "Касовий термінал відмінно працює на всіх сенсорних пристроях, \nбудь то мультисенсорний планшет, як iPad, \nчи резистивний сенсорний термінал."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.website_planner
@@ -4035,14 +4036,14 @@ msgstr "Яке обладнання підтримує Odoo POS?"
 msgid ""
 "While an internet connection is required to start the Point of\n"
 "                                Sale, it will stay operational even after a complete disconnection."
-msgstr "В той час як з'єднання з Інтернетом необхідне для запуску POS,\nвоно працюватиме навіть після повного його відключення."
+msgstr "В той час як з'єднання з Інтернетом необхідне для запуску касового терміналу,\nвоно працюватиме навіть після повного його відключення."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.s_faq
 msgid ""
 "While an internet connection is required to start the Point of\n"
 "                Sale, it will stay operational even after a complete disconnection."
-msgstr "В той час як з'єднання з Інтернетом необхідне для запуску POS,\nвоно працюватиме навіть після повного його відключення."
+msgstr "В той час як з'єднання з Інтернетом необхідне для запуску касового терміналу,\nвоно працюватиме навіть після повного його відключення."
 
 #. module: website
 #: model:ir.ui.view,arch_db:website.s_text_image_floating

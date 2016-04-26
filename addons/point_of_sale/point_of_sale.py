@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
+import psycopg2
 import time
 from datetime import datetime
 import uuid
@@ -195,7 +196,6 @@ class pos_config(osv.osv):
 
     def _get_default_company(self, cr, uid, context=None):
         company_id = self.pool.get('res.users')._get_company(cr, uid, context=context)
-        print company_id
         return company_id
 
     def _get_default_nomenclature(self, cr, uid, context=None):
@@ -314,7 +314,7 @@ class pos_config(osv.osv):
                 'config_id': record.id,
             }
             session_id = proxy.create(cr, uid, values, context=context)
-            record.current_session_id = proxy.browse(cr, uid, session_id, context=context)
+            self.write(cr, SUPERUSER_ID, record.id, {'current_session_id': session_id}, context=context)
             if record.current_session_id.state == 'opened':
                 return self.open_ui(cr, uid, ids, context=context)
             return self._open_session(session_id)
@@ -521,28 +521,24 @@ class pos_session(osv.osv):
             journal_proxy.write(cr, SUPERUSER_ID, cashids, {'journal_user': True})
             jobj.write(cr, SUPERUSER_ID, [pos_config.id], {'journal_ids': [(6,0, cashids)]})
 
-
-        pos_config = jobj.browse(cr, uid, config_id, context=context)
-
-        statements = [(0, 0, {
-            'journal_id': journal.id,
-            'user_id': uid,
-            'company_id': pos_config.company_id.id
-        }) for journal in pos_config.journal_ids]
+        statements = []
+        create_statement = partial(self.pool['account.bank.statement'].create, cr, uid)
+        for journal in pos_config.journal_ids:
+            # set the journal_id which should be used by
+            # account.bank.statement to set the opening balance of the
+            # newly created bank statement
+            context['journal_id'] = journal.id if pos_config.cash_control and journal.type == 'cash' else False
+            st_values = {
+                'journal_id': journal.id,
+                'user_id': uid,
+            }
+            statements.append(create_statement(st_values, context=context))
 
         values.update({
             'name': self.pool['ir.sequence'].next_by_code(cr, uid, 'pos.session', context=context),
-            'statement_ids': statements,
+            'statement_ids': [(6, 0, statements)],
             'config_id': config_id
         })
-
-        # set the journal_id which should be used by
-        # account.bank.statement to set the opening balance of the
-        # newly created bank statement
-        if pos_config.cash_control:
-            for journal in pos_config.journal_ids:
-                if journal.type == 'cash':
-                    context.update({'journal_id': journal.id})
 
         return super(pos_session, self).create(cr, uid, values, context=context)
 
@@ -648,7 +644,7 @@ class pos_order(osv.osv):
     _order = "id desc"
 
     def _amount_line_tax(self, cr, uid, line, fiscal_position_id, context=None):
-        taxes = line.product_id.taxes_id.filtered(lambda t: t.company_id.id == line.order_id.company_id.id)
+        taxes = line.tax_ids.filtered(lambda t: t.company_id.id == line.order_id.company_id.id)
         if fiscal_position_id:
             taxes = fiscal_position_id.map_tax(taxes)
         price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
@@ -706,6 +702,23 @@ class pos_order(osv.osv):
 
             return new_session_id
 
+    def _match_payment_to_invoice(self, cr, uid, order, context=None):
+        account_precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+
+        # ignore orders with an amount_paid of 0 because those are returns through the POS
+        if not float_is_zero(order['amount_return'], account_precision) and not float_is_zero(order['amount_paid'], account_precision):
+            cur_amount_paid = 0
+            payments_to_keep = []
+            for payment in order.get('statement_ids'):
+                if cur_amount_paid + payment[2]['amount'] > order['amount_total']:
+                    payment[2]['amount'] = order['amount_total'] - cur_amount_paid
+                    payments_to_keep.append(payment)
+                    break
+                cur_amount_paid += payment[2]['amount']
+                payments_to_keep.append(payment)
+            order['statement_ids'] = payments_to_keep
+            order['amount_return'] = 0
+
     def _process_order(self, cr, uid, order, context=None):
         session = self.pool.get('pos.session').browse(cr, uid, order['pos_session_id'], context=context)
 
@@ -762,11 +775,18 @@ class pos_order(osv.osv):
         for tmp_order in orders_to_save:
             to_invoice = tmp_order['to_invoice']
             order = tmp_order['data']
+
+            if to_invoice:
+                self._match_payment_to_invoice(cr, uid, order, context=context)
+
             order_id = self._process_order(cr, uid, order, context=context)
             order_ids.append(order_id)
 
             try:
                 self.signal_workflow(cr, uid, [order_id], 'paid')
+            except psycopg2.OperationalError:
+                # do not hide transactional errors, the order(s) won't be saved!
+                raise
             except Exception as e:
                 _logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
 
@@ -1133,9 +1153,11 @@ class pos_order(osv.osv):
                 'comment': order.note or '',
                 'currency_id': order.pricelist_id.currency_id.id, # considering partner's sale pricelist's currency
                 'company_id': company_id,
+                'user_id': uid,
             }
             invoice = inv_ref.new(cr, uid, inv)
             invoice._onchange_partner_id()
+            invoice.fiscal_position_id = order.fiscal_position_id
 
             inv = invoice._convert_to_write(invoice._cache)
             if not inv.get('account_id', None):
@@ -1251,7 +1273,6 @@ class pos_order(osv.osv):
                     'journal_id' : sale_journal_id,
                     'date' : fields.date.context_today(self, cr, uid, context=context),
                     'move_id' : move_id,
-                    'company_id': current_company.id,
                 })
 
                 if data_type == 'product':
@@ -1400,9 +1421,10 @@ class pos_order_line(osv.osv):
     def _amount_line_all(self, cr, uid, ids, field_names, arg, context=None):
         res = dict([(i, {}) for i in ids])
         account_tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
         for line in self.browse(cr, uid, ids, context=context):
             cur = line.order_id.pricelist_id.currency_id
-            taxes = [ tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id ]
+            taxes = [ tax for tax in line.tax_ids if tax.company_id.id == line.order_id.company_id.id ]
             fiscal_position_id = line.order_id.fiscal_position_id
             if fiscal_position_id:
                 taxes = fiscal_position_id.map_tax(taxes)
@@ -1413,6 +1435,10 @@ class pos_order_line(osv.osv):
                 taxes = account_tax_obj.browse(cr, uid, taxes_ids, context).compute_all(price, cur, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
                 res[line.id]['price_subtotal'] = taxes['total_excluded']
                 res[line.id]['price_subtotal_incl'] = taxes['total_included']
+
+            res[line.id]['price_subtotal'] = cur_obj.round(cr, uid, cur, res[line.id]['price_subtotal'])
+            res[line.id]['price_subtotal_incl'] = cur_obj.round(cr, uid, cur, res[line.id]['price_subtotal_incl'])
+
         return res
 
     def onchange_product_id(self, cr, uid, ids, pricelist, product_id, qty=0, partner_id=False, context=None):
@@ -1524,30 +1550,24 @@ class pos_category(osv.osv):
     # In this case, the default image is set by the js code.
     image = openerp.fields.Binary("Image", attachment=True,
         help="This field holds the image used as image for the cateogry, limited to 1024x1024px.")
-    image_medium = openerp.fields.Binary("Medium-sized image",
-        compute='_compute_images', inverse='_inverse_image_medium', store=True, attachment=True,
+    image_medium = openerp.fields.Binary("Medium-sized image", attachment=True,
         help="Medium-sized image of the category. It is automatically "\
              "resized as a 128x128px image, with aspect ratio preserved. "\
              "Use this field in form views or some kanban views.")
-    image_small = openerp.fields.Binary("Small-sized image",
-        compute='_compute_images', inverse='_inverse_image_small', store=True, attachment=True,
+    image_small = openerp.fields.Binary("Small-sized image", attachment=True,
         help="Small-sized image of the category. It is automatically "\
              "resized as a 64x64px image, with aspect ratio preserved. "\
              "Use this field anywhere a small image is required.")
 
-    @openerp.api.depends('image')
-    def _compute_images(self):
-        for rec in self:
-            rec.image_medium = tools.image_resize_image_medium(rec.image)
-            rec.image_small = tools.image_resize_image_small(rec.image)
+    @openerp.api.model
+    def create(self, vals):
+        tools.image_resize_images(vals)
+        return super(pos_category, self).create(vals)
 
-    def _inverse_image_medium(self):
-        for rec in self:
-            rec.image = tools.image_resize_image_big(rec.image_medium)
-
-    def _inverse_image_small(self):
-        for rec in self:
-            rec.image = tools.image_resize_image_big(rec.image_small)
+    @openerp.api.multi
+    def write(self, vals):
+        tools.image_resize_images(vals)
+        return super(pos_category, self).write(vals)
 
 class product_template(osv.osv):
     _inherit = 'product.template'
@@ -1598,10 +1618,10 @@ class barcode_rule(models.Model):
     def _get_type_selection(self):
         types = sets.Set(super(barcode_rule,self)._get_type_selection())
         types.update([
-            ('weight','Weighted Product'),
-            ('price','Priced Product'),
-            ('discount','Discounted Product'),
-            ('client','Client'),
-            ('cashier','Cashier')
+            ('weight', _('Weighted Product')),
+            ('price', _('Priced Product')),
+            ('discount', _('Discounted Product')),
+            ('client', _('Client')),
+            ('cashier', _('Cashier'))
         ])
         return list(types)
